@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Minijuegos - Guanajuato Kids</title>
+
+    <!--
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.puter.com/v2/"></script> -->
+
+    <script src="TailwindCSS/tailwind.js"></script>
+    <script src="TailwindCSS/puter.js"></script>
+
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styleGames.css"> <!-- Hoja de estilos específica para juegos -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        title: ['Fredoka One', 'cursive'],
+                    },
+                    colors: {
+                        'primary': '#1e71ed',
+                        'title-mustard': '#f59e0b',
+                        success: '#22c55e',
+                        danger: '#ef4444',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900">
+
+    <div id="app-container" class="min-h-screen flex flex-col">
+        <!-- Header (Reutilizado y controlado por app.js) -->
+        <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg shadow-md sticky top-0 z-40">
+            <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <img src="https://placehold.co/50x50/3b82f6/ffffff?text=GTO" alt="Logo Guanajuato" class="w-12 h-12 rounded-full border-2 border-primary">
+                    <h1 class="text-2xl md:text-3xl text-slate-800 dark:text-white">GTO Kids</h1>
+                </a>
+                <div class="flex items-center gap-4">
+                    <div id="player-stats" class="hidden md:flex items-center gap-4 font-bold">
+                        <div class="bg-amber-100 text-amber-600 dark:text-amber-300 dark:bg-amber-900/50 py-1 px-3 rounded-full flex items-center gap-2">
+                            🪙 <span id="player-coins">0</span>
+                        </div>
+                         <div class="bg-sky-100 text-sky-600 dark:text-sky-300 dark:bg-sky-900/50 py-1 px-3 rounded-full flex items-center gap-2">
+                            ⭐ <span id="player-points">0</span>
+                        </div>
+                    </div>
+                    <button id="theme-toggle-btn" class="p-2 rounded-full bg-slate-200 dark:bg-slate-700 text-amber-500 hover:scale-110 transition-transform">
+                         <svg id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 12a5 5 0 100-10 5 5 0 000 10z" /></svg>
+                        <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    </button>
+                    <div id="profile-menu-container" class="relative hidden">
+                        <!-- El menú de perfil se llenará con app.js -->
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
+            <div id="no-profile-view" class="hidden text-center py-20 bg-white dark:bg-slate-800 rounded-2xl shadow-xl">
+                <h2 class="text-4xl text-primary">¡Acceso denegado!</h2>
+                <p class="mt-4 text-xl text-slate-600 dark:text-slate-300">Necesitas un perfil para acceder a los minijuegos.</p>
+                <a href="index.html" class="btn-3d inline-block bg-primary text-white border-blue-700 mt-8 px-8 py-3 text-lg">Crear Perfil</a>
+            </div>
+
+            <div id="games-main-view" class="hidden">
+                <h1 class="text-4xl md:text-5xl text-center text-slate-800 dark:text-white mb-8">Galería de Minijuegos</h1>
+                <div id="game-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Las tarjetas de los juegos se generarán aquí con JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal para los Juegos (Pantalla Completa) -->
+    <div id="game-modal-backdrop" class="fixed inset-0 bg-slate-900 z-50 hidden flex-col items-center justify-center p-4 transition-opacity duration-300">
+        <div id="game-modal-header" class="w-full max-w-6xl flex justify-between items-center p-4 text-white">
+            <button id="back-to-gallery-btn" class="btn-3d bg-blue-500 text-white border-blue-700 text-sm px-4 py-2 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                Atrás
+            </button>
+            <h2 id="game-modal-title" class="text-2xl"></h2>
+            <div id="game-modal-profile" class="flex items-center gap-3">
+                <span id="game-modal-username" class="font-bold hidden sm:block"></span>
+                <img id="game-modal-avatar" src="" class="w-10 h-10 rounded-full border-2 border-amber-400">
+            </div>
+        </div>
+        <div id="game-canvas-container" class="w-full max-w-6xl h-full flex-grow flex items-center justify-center relative">
+            <!-- El canvas o el contenido del juego se insertará aquí -->
+            <div id="game-result-overlay" class="absolute inset-0 bg-black/70 hidden flex-col items-center justify-center gap-4 text-white z-10 p-4 text-center">
+                <h3 id="game-result-title" class="text-5xl"></h3>
+                <p id="game-result-message" class="text-xl"></p>
+                <div id="game-result-buttons" class="flex gap-4 mt-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="./js/config.js" type="module"></script>
+    <script src="./js/player-data.js" type="module"></script>
+    <script src="./js/ui.js" type="module"></script>
+    <script src="./js/app.js" type="module"></script>
+    <script src="./js/juegos-main.js" type="module"></script>
+</body>
+</html>

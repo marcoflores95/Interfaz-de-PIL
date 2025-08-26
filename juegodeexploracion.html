@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Exploración IA</title>
+
+    <!--
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.puter.com/v2/"></script> -->
+
+    <script src="TailwindCSS/tailwind.js"></script>
+    <script src="TailwindCSS/puter.js"></script>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script> -->
+    <script src="TailwindCSS/Sortable.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { title: ['Fredoka One', 'cursive'], body: ['Poppins', 'sans-serif'] }, colors: { primary: '#1e71ed', secondary: '#f59e0b', success: '#22c55e', danger: '#ef4444', 'title-mustard': '#f59e0b' } } } }
+    </script>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+
+    <div id="app-container" class="min-h-screen flex flex-col">
+        <!-- Header Unificado (la lógica está en app.js) -->
+        <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg shadow-md sticky top-0 z-40">
+            <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <!--
+                    <img src="https://placehold.co/50x50/3b82f6/ffffff?text=GTO" alt="Logo Guanajuato" class="w-12 h-12 rounded-full border-2 border-primary">
+                    <h1 class="font-title text-2xl md:text-3xl text-slate-800 dark:text-white">GTO Kids</h1> -->
+                </a>
+
+                <img src="img/Botones/btn_regresar.png" alt="Logo Guanajuato" class="btn_regresar" draggable="false" onclick="btn_regresar()">
+                <img src="img/LOGO SEG 2022-01.png" alt="Logo Guanajuato">
+
+                <div class="flex items-center gap-2 md:gap-4">
+                    <a href="asistente.html" class="btn-3d bg-teal-500 text-white border-teal-700 px-4 py-2 text-sm hidden md:block">Asistente IA</a>
+                    <a href="municipios.html" class="btn-3d bg-amber-500 text-white border-amber-700 px-4 py-2 text-sm hidden md:block">Jugar</a>
+                    <a href="tienda.html" class="btn-3d bg-green-500 text-white border-green-700 px-4 py-2 text-sm hidden md:block">Tienda</a>
+                    <div id="player-stats" class="hidden md:flex items-center gap-4 font-bold">
+                        <div class="bg-amber-100 text-amber-600 dark:text-amber-300 dark:bg-amber-900/50 py-1 px-3 rounded-full flex items-center gap-2">
+                            🪙 <span id="player-coins">0</span>
+                        </div>
+                    </div>
+                   <button id="theme-toggle-btn" class="p-2 rounded-full bg-slate-200 dark:bg-slate-700 text-amber-500 hover:scale-110 transition-transform">
+                        <svg id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 12a5 5 0 100-10 5 5 0 000 10z" /></svg>
+                        <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    </button>
+                    <div id="profile-menu-container" class="relative hidden">
+                        <button id="profile-menu-button" class="flex items-center gap-3 p-1 rounded-full bg-slate-200 dark:bg-slate-600 transition-transform hover:scale-105">
+                            <img id="player-avatar" src="https://placehold.co/50x50/78716c/ffffff?text=?" alt="Avatar del Jugador" class="w-10 h-10 rounded-full border-2 border-secondary">
+                        </button>
+                        <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 py-1 z-50">
+                                <a href="#" id="change-profile-btn" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700">Cambiar de Perfil</a>
+                            <a href="logros.html" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700">Mis Logros</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
+            <div id="no-profile-view" class="hidden text-center">
+                 <h2 class="text-3xl text-primary mb-4">Acceso Denegado!</h2>
+                 <p class="text-slate-600 dark:text-slate-300 mb-6">Necesitas un perfil para jugar el Juego de Exploración.</p>
+                 <a href="index.html" class="btn-3d bg-primary text-white border-blue-700">Crear Perfil</a>
+            </div>
+
+            <div id="game-view" class="hidden">
+                <div class="text-center mb-8">
+                    <h1 class="text-4xl md:text-5xl text-title-mustard">Reconstruye la Leyenda</h1>
+                    <p class="text-slate-500 dark:text-slate-400 mt-2">¡Apuesta tus monedas y ordena la historia antes de que el tiempo se acabe!</p>
+                </div>
+
+                <div class="max-w-3xl mx-auto bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl shadow-xl">
+                    <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                        <select id="municipio-select" class="w-full sm:w-2/3 p-3 border-2 border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700">
+                            <option value="">Elige un municipio...</option>
+                        </select>
+                        <button id="start-game-btn" class="w-full sm:w-1/3 btn-3d bg-primary text-white border-blue-700">Jugar</button>
+                    </div>
+
+                    <div id="game-container" class="mt-4 min-h-[300px] p-4 bg-slate-100 dark:bg-slate-700/50 rounded-lg">
+                        <div id="game-placeholder" class="flex flex-col items-center justify-center h-full text-slate-500 dark:text-slate-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                            <p>Selecciona un municipio y haz clic en "Jugar" para empezar.</p>
+                        </div>
+                        <div id="game-area" class="hidden">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 id="story-title" class="text-2xl text-secondary"></h3>
+                                <div id="timer-display" class="font-mono text-2xl font-bold text-red-500 bg-red-100 dark:bg-red-900/50 px-3 py-1 rounded-lg"></div>
+                            </div>
+                            <div id="paragraphs-container" class="space-y-3"></div>
+                            <button id="check-order-btn" class="w-full mt-6 btn-3d bg-green-500 text-white border-green-700 hidden">Verificar Orden</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Apuestas -->
+    <div id="bet-modal-backdrop" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden items-center justify-center p-4">
+        <div class="modal-animate p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-md w-full text-center">
+            <h3 class="text-2xl text-secondary">¡Haz tu Apuesta!</h3>
+            <p class="text-slate-600 dark:text-slate-300 my-4">Elige cuánto quieres apostar. Si ganas, ¡multiplicas tus monedas!</p>
+            <div id="bet-options" class="space-y-3"></div>
+            <button id="close-bet-modal-btn" class="mt-6 text-sm text-slate-500 hover:text-slate-800 dark:hover:text-white">Cancelar</button>
+        </div>
+    </div>
+    
+    <!-- Contenedor para efectos visuales -->
+    <div id="effects-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/config.js" type="module"></script>
+    <script src="js/player-data.js" type="module"></script>
+    <script src="js/ui.js" type="module"></script>
+    <!-- Lógica común de la aplicación (tema, header) -->
+    <script src="js/app.js" type="module"></script>
+    <!-- Lógica específica de la página del juego -->
+    <script src="js/juegoexplorador.js" type="module"></script>
+    <script src="js/funciones.js"></script>
+</body>
+</html>

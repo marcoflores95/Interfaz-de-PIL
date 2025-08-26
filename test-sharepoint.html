@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suite de Pruebas: SharePoint y PlayerData</title>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+
+    <script src="TailwindCSS/tailwind.js"></script>
+    <script src="TailwindCSS/puter.js"></script>
+
+    <style>
+        .log-success { color: #22c55e; }
+        .log-error { color: #ef4444; }
+        .log-info { color: #3b82f6; }
+        .log-warn { color: #f59e0b; }
+        .log-header { color: #5eead4; font-weight: bold; margin-top: 8px; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200 font-sans">
+
+    <div class="container mx-auto p-8 max-w-6xl">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-teal-400">Suite de Pruebas Avanzada</h1>
+            <p class="text-slate-400 mt-2">Verifica la funcionalidad de `registro.js` y `player-data.js`.</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Columna de Pruebas de SharePoint -->
+            <div class="bg-slate-800 p-6 rounded-xl shadow-lg flex flex-col">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2 border-slate-700 text-cyan-300">Pruebas de Carga a SharePoint</h2>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="flex-grow">
+                        <label for="user-count" class="block mb-2 text-sm font-medium text-slate-300"># de usuarios a registrar:</label>
+                        <input type="number" id="user-count" value="5" class="bg-slate-900 border border-slate-700 text-white text-sm rounded-lg focus:ring-teal-500 focus:border-teal-500 block w-full p-2.5">
+                    </div>
+                    <button id="run-sharepoint-test-btn" class="self-end h-11 text-white font-bold py-2 px-6 rounded-lg bg-teal-600 hover:bg-teal-700 transition-colors">
+                        Iniciar Prueba
+                    </button>
+                </div>
+                <div id="sharepoint-summary" class="mb-4 text-center"></div>
+                <pre id="sharepoint-log-output" class="flex-grow bg-slate-900 text-white p-4 rounded-lg h-96 overflow-y-auto text-sm font-mono"></pre>
+            </div>
+
+            <!-- Columna de Pruebas de PlayerData -->
+            <div class="bg-slate-800 p-6 rounded-xl shadow-lg flex flex-col">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2 border-slate-700 text-amber-300">Pruebas de Datos del Jugador (localStorage)</h2>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <button id="create-test-profile-btn" class="btn-test bg-blue-600 hover:bg-blue-700">Crear Perfil de Prueba</button>
+                    <button id="add-coins-btn" class="btn-test bg-green-600 hover:bg-green-700">Añadir 500 Monedas</button>
+                    <button id="unlock-avatars-btn" class="btn-test bg-purple-600 hover:bg-purple-700">Desbloquear Avatares</button>
+                    <button id="delete-test-profile-btn" class="btn-test bg-red-600 hover:bg-red-700">Borrar Perfil de Prueba</button>
+                </div>
+                <pre id="player-data-log-output" class="flex-grow bg-slate-900 text-white p-4 rounded-lg h-96 overflow-y-auto text-sm font-mono"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Importar todas las funciones necesarias
+        import { registerStudentVisit } from './js/registro.js';
+        import * as Player from './js/player-data.js';
+        import * as UI from './js/ui.js'; // Para notificaciones si es necesario
+
+        // IDs para los perfiles de prueba
+        const TEST_PROFILE_ID = 'test_profile_123';
+
+        // Elementos del DOM
+        const spLog = document.getElementById('sharepoint-log-output');
+        const pdLog = document.getElementById('player-data-log-output');
+        const spSummary = document.getElementById('sharepoint-summary');
+
+        // --- Datos de Muestra Expandidos ---
+        const firstNames = ["Sofía", "Mateo", "Valentina", "Santiago", "Regina", "Leonardo", "Camila", "Sebastián", "Isabella", "Matías", "Ximena", "Diego", "Mariana", "Emiliano", "Victoria", "Nicolás"];
+        const lastNames = ["Hernández", "García", "Martínez", "López", "González", "Pérez", "Rodríguez", "Sánchez", "Ramírez", "Cruz", "Flores", "Gómez", "Rojas", "Vázquez"];
+        const municipios = ["León", "Irapuato", "Celaya", "Salamanca", "Silao", "Guanajuato", "San Miguel de Allende", "Dolores Hidalgo", "Acámbaro", "Valle de Santiago", "Pénjamo", "San Felipe", "Salvatierra", "San Luis de la Paz"];
+
+        // --- Funciones de Logging ---
+        const log = (el, message, type = 'info') => {
+            const entry = document.createElement('div');
+            entry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            entry.className = `log-${type}`;
+            el.appendChild(entry);
+            el.scrollTop = el.scrollHeight;
+        };
+
+        // --- Lógica de Pruebas de SharePoint ---
+        const runSharePointTestBtn = document.getElementById('run-sharepoint-test-btn');
+        const userCountInput = document.getElementById('user-count');
+
+        function getRandomElement(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+        function generateRandomUser() {
+            const gender = Math.random() > 0.5 ? 'boy' : 'girl';
+            const username = `${getRandomElement(firstNames)}${getRandomElement(lastNames)}${Math.floor(Math.random() * 900) + 100}`;
+            return { username, gender, age: Math.floor(Math.random() * 12) + 6, municipality: getRandomElement(municipios) };
+        }
+
+        runSharePointTestBtn.addEventListener('click', async () => {
+            runSharePointTestBtn.disabled = true;
+            runSharePointTestBtn.textContent = 'Probando...';
+            spLog.innerHTML = '';
+            spSummary.innerHTML = '';
+
+            const userCount = parseInt(userCountInput.value, 10);
+            if (isNaN(userCount) || userCount <= 0) {
+                log(spLog, 'Por favor, introduce un número válido de usuarios.', 'error');
+                runSharePointTestBtn.disabled = false;
+                runSharePointTestBtn.textContent = 'Iniciar Prueba';
+                return;
+            }
+
+            log(spLog, `Iniciando prueba para registrar ${userCount} usuarios...`, 'warn');
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (let i = 0; i < userCount; i++) {
+                const randomUser = generateRandomUser();
+                log(spLog, `[${i + 1}/${userCount}] Registrando a: ${randomUser.username}...`);
+                
+                const success = await registerStudentVisit(randomUser);
+                
+                if (success) {
+                    log(spLog, `-> <span class="log-success">ÉXITO</span> al registrar a ${randomUser.username}.`, 'success');
+                    successCount++;
+                } else {
+                    log(spLog, `-> <span class="log-error">ERROR</span> al registrar a ${randomUser.username}. Revisa la consola de desarrollo.`, 'error');
+                    errorCount++;
+                }
+                await new Promise(resolve => setTimeout(resolve, 250)); // Pausa para no saturar
+            }
+
+            log(spLog, 'Prueba completada.', 'warn');
+            spSummary.innerHTML = `<span class="log-success">Registros exitosos: ${successCount}</span> | <span class="log-error">Registros fallidos: ${errorCount}</span>`;
+            runSharePointTestBtn.disabled = false;
+            runSharePointTestBtn.textContent = 'Iniciar Prueba';
+        });
+
+        // --- Lógica de Pruebas de PlayerData ---
+        document.getElementById('create-test-profile-btn').addEventListener('click', () => {
+            log(pdLog, "Intentando crear perfil de prueba...", 'header');
+            Player.deletePlayerProfile(TEST_PROFILE_ID); // Limpiar perfil anterior si existe
+            const profile = Player.createNewPlayer('Tester', 'student', { gender: 'boy', age: 10, municipality: 'León', synced: true });
+            if (profile) {
+                Player.setActiveProfile(profile.id); // Establecer como activo para otras pruebas
+                log(pdLog, `Perfil de prueba '${profile.username}' creado con ID: ${profile.id}`, 'success');
+            } else {
+                log(pdLog, 'No se pudo crear el perfil de prueba.', 'error');
+            }
+        });
+
+        document.getElementById('add-coins-btn').addEventListener('click', () => {
+            log(pdLog, "Añadiendo 500 monedas...", 'header');
+            const activePlayer = Player.getPlayerData();
+            if (!activePlayer) {
+                log(pdLog, "No hay un perfil activo. Crea uno primero.", 'error');
+                return;
+            }
+            const newTotal = Player.updatePlayerCoins(500);
+            log(pdLog, `Monedas añadidas. Nuevo total para '${activePlayer.username}': ${newTotal}`, 'success');
+        });
+
+        document.getElementById('unlock-avatars-btn').addEventListener('click', () => {
+            log(pdLog, "Desbloqueando todos los avatares...", 'header');
+            const activePlayer = Player.getPlayerData();
+            if (!activePlayer) {
+                log(pdLog, "No hay un perfil activo. Crea uno primero.", 'error');
+                return;
+            }
+            Player.unlockAllStoreAvatars(activePlayer.id);
+            log(pdLog, `Todos los avatares de la tienda desbloqueados para '${activePlayer.username}'.`, 'success');
+        });
+        
+        document.getElementById('delete-test-profile-btn').addEventListener('click', () => {
+            log(pdLog, "Borrando perfiles de prueba...", 'header');
+            const allProfiles = Player.getAllProfiles();
+            let deletedCount = 0;
+            for (const id in allProfiles) {
+                if (allProfiles[id].username === 'Tester') {
+                    Player.deletePlayerProfile(id);
+                    log(pdLog, `Perfil con ID ${id} borrado.`, 'warn');
+                    deletedCount++;
+                }
+            }
+            if (deletedCount > 0) {
+                 log(pdLog, `${deletedCount} perfiles de prueba borrados.`, 'success');
+            } else {
+                 log(pdLog, `No se encontraron perfiles con el nombre 'Tester'.`, 'info');
+            }
+        });
+
+    </script>
+</body>
+</html>

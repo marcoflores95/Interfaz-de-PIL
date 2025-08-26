@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es" class="dark"> <!-- MODO OSCURO PREDETERMINADO -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente y Trivia IA</title>
+    
+    <!--
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.puter.com/v2/"></script> -->
+
+    <script src="TailwindCSS/tailwind.js"></script>
+    <script src="TailwindCSS/puter.js"></script>
+
+
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        title: ['Fredoka One', 'cursive'],
+                        body: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#1e71ed',
+                        secondary: '#f59e0b',
+                        success: '#22c55e',
+                        danger: '#ef4444',
+                        'title-mustard': '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+
+    <div id="app-container" class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg shadow-md sticky top-0 z-40">
+            <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <!--
+                    <img src="https://placehold.co/50x50/3b82f6/ffffff?text=GTO" alt="Logo Guanajuato" class="w-12 h-12 rounded-full border-2 border-primary">
+                    <h1 class="font-title text-2xl md:text-3xl text-slate-800 dark:text-white">GTO Kids</h1> -->
+                </a>
+
+                    <img src="img/Botones/btn_regresar.png" alt="Logo Guanajuato" class="btn_regresar" draggable="false" onclick="btn_regresar()">
+                    <img src="img/LOGO SEG 2022-01.png" alt="Logo Guanajuato">
+                    
+                <div class="flex items-center gap-4">
+
+                    <div id="player-stats" class="flex items-center gap-4 font-bold">
+                        <div class="bg-amber-100 text-amber-600 dark:text-amber-300 dark:bg-amber-900/50 py-1 px-3 rounded-full flex items-center gap-2">
+                            🪙 <span id="player-coins">0</span>
+                        </div>
+                        <div class="bg-sky-100 text-sky-600 dark:text-sky-300 dark:bg-sky-900/50 py-1 px-3 rounded-full flex items-center gap-2">
+                            ⏳ <span id="credits-timer-text">--:--</span>
+                        </div>
+                    </div> 
+
+                    <button id="theme-toggle-btn" class="p-2 rounded-full bg-slate-200 dark:bg-slate-700 text-amber-500 hover:scale-110 transition-transform">
+                        <svg id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 12a5 5 0 100-10 5 5 0 000 10z" /></svg>
+                        <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    </button>
+                    <div id="profile-menu-container" class="relative">
+                        <button id="profile-menu-button" class="flex items-center gap-3 p-1 rounded-full bg-slate-200 dark:bg-slate-600 transition-transform hover:scale-105">
+                            <span id="profile-menu-name" class="font-bold text-slate-700 dark:text-slate-200 hidden sm:block px-2"></span>
+                            <img id="player-avatar" src="https://placehold.co/50x50/78716c/ffffff?text=?" alt="Avatar del Jugador" class="w-10 h-10 rounded-full border-2 border-secondary">
+                        </button>
+                        <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 py-1 z-50">
+                            <a href="#" id="modify-profile-btn" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700">Modificar Perfil</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Contenido Principal -->
+        <main class="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
+            <div id="no-profile-view" class="hidden text-center">
+                 <h2 class="text-3xl text-primary mb-4">¡Oh, no!</h2>
+                 <p class="text-slate-600 dark:text-slate-300 mb-6">Para usar el asistente y jugar a la trivia, primero necesitas un perfil.</p>
+                 <a href="index.html" class="btn-3d bg-primary text-white border-blue-700">Crear Perfil de Explorador</a>
+            </div>
+
+            <div id="asistente-main-view" class="hidden">
+                <div class="flex flex-col md:flex-row gap-4 sm:gap-8 w-full h-full">
+                    <aside class="w-full md:w-2/5 lg:w-1/3 flex flex-col gap-4">
+                        <div class="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl shadow-xl">
+                            <h3 class="text-lg sm:text-xl text-secondary mb-2">Trivia Rápida de IA</h3>
+                            <select id="trivia-municipio-select" class="w-full p-2 border-2 border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 mb-4 text-sm">
+                                <option value="">Elige un municipio (o al azar)</option>
+                            </select>
+                            <div id="trivia-game-container" class="min-h-[200px] flex flex-col justify-center items-center text-center"></div>
+                        </div>
+                    </aside>
+                    <section class="w-full md:w-3/5 lg:w-2/3 bg-white dark:bg-slate-800 rounded-2xl shadow-xl flex flex-col h-[65vh]">
+                        <div id="chat-window" class="flex-grow p-4 sm:p-6 space-y-4 overflow-y-auto"></div>
+                        <div id="loading-indicator" class="hidden px-6 pb-2"><p class="text-sm italic text-slate-500">Escribiendo...</p></div>
+                        <div class="p-4 border-t border-slate-200 dark:border-slate-700">
+                            <form id="chat-form" class="flex gap-4">
+                                <input type="text" id="chat-input" placeholder="Compra tiempo para chatear..." class="w-full px-4 py-2 border rounded-lg dark:bg-slate-900" required disabled>
+                                <button type="submit" class="btn-3d bg-primary text-white border-blue-700" disabled>Enviar</button>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Modal para Comprar Créditos -->
+    <div id="buy-credits-backdrop" class="fixed inset-0 bg-black bg-opacity-70 z-[1000] hidden items-center justify-center p-4">
+        <div class="modal-animate p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-sm w-full text-center">
+            <h3 id="buy-credits-title" class="text-2xl text-secondary">¿Necesitas más tiempo?</h3>
+            <p class="text-slate-600 dark:text-slate-300 my-4">Usa tus monedas 🪙 para comprar tiempo y seguir charlando con el asistente.</p>
+            <div id="buy-credits-options" class="space-y-3"></div>
+            <p id="no-coins-message" class="text-danger my-4 hidden">No tienes suficientes monedas.</p>
+            <div class="mt-4">
+                <p class="text-sm text-slate-500">O gana monedas en los juegos:</p>
+                <button id="go-to-games-btn" class="w-full mt-2 btn-3d bg-green-500 text-white border-green-700">Ir a Juegos</button>
+            </div>
+            <button id="close-buy-credits-btn" class="mt-6 text-sm text-slate-500 hover:text-slate-800 dark:hover:text-white">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- NOTA: Se asume que estos scripts ya existen y son correctos -->
+    <script src="js/asistente-logic.js" type="module"></script>
+    <script src="js/config.js" type="module"></script>
+    <script src="js/player-data.js" type="module"></script>
+    <script src="js/ui.js" type="module"></script>
+    <script src="js/funciones.js"></script>
+</body>
+</html>

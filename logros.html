@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Logros</title>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+
+    <script src="TailwindCSS/tailwind.js"></script>
+    <script src="TailwindCSS/puter.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#1e71ed',
+                        'title-mustard': '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-primary text-slate-800">
+
+    <div id="app-container" class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg shadow-md sticky top-0 z-40">
+             <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+                <a href="index.html" class="logo-container flex items-center gap-3 group">
+
+                    <!-- <img src="https://placehold.co/50x50/3b82f6/ffffff?text=GTO" alt="Logo Guanajuato" class="logo-img rounded-full transition-transform group-hover:-rotate-12"> -->
+                    <!-- <img src="img/LOGO SEG 2022-01.png" alt="Logo Guanajuato" class="logo-img rounded-full transition-transform group-hover:-rotate-12"> -->
+                    
+                    
+                    <div class="logo-text-wrapper relative">
+                        <h1 class="text-2xl md:text-3xl text-slate-800 dark:text-white transition-opacity duration-300 group-hover:opacity-0"></h1>
+                        <div class="absolute inset-0 flex items-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                            <!-- <span class="text-xl md:text-2xl text-primary ml-2">Inicio</span> -->
+                        </div>
+                    </div>
+                </a>
+
+
+                <div class="btn_regresar">
+                    <img src="img/Botones/btn_regresar.png" alt="Logo Guanajuato" draggable="false" onclick="btn_regresar()">
+                </div>
+                
+                <img src="img/LOGO SEG 2022-01.png" alt="Logo Guanajuato" class="logo-img rounded-full transition-transform">
+
+                <div class="flex items-center gap-4">
+                    <a href="asistente.html" class="btn-3d hidden sm:inline-block bg-teal-500 text-white border-teal-700 px-4 py-2 text-sm">Asistente IA</a>
+                    <a href="municipios.html" class="btn-3d hidden sm:inline-block bg-blue-500 text-white border-blue-700 px-4 py-2 text-sm">Jugar</a>
+                    <a href="tienda.html" class="btn-3d hidden sm:inline-block bg-green-500 text-white border-green-700 px-4 py-2 text-sm">Tienda</a>
+                    
+                    <button id="theme-toggle-btn" class="p-2 rounded-full bg-slate-200 dark:bg-slate-700 text-amber-500 hover:scale-110 transition-transform">
+                        <svg id="theme-icon-sun" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 12a5 5 0 100-10 5 5 0 000 10z" /></svg>
+                        <svg id="theme-icon-moon" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
+            <div id="no-profile-view" class="hidden text-center py-20 bg-white dark:bg-slate-800 rounded-2xl shadow-xl">
+                <h2 class="text-4xl text-title-mustard">¡Ups!</h2>
+                <p class="mt-4 text-xl text-slate-600 dark:text-slate-300">Necesitas un perfil de explorador para ver tus logros.</p>
+                <a href="index.html" class="btn-3d inline-block bg-blue-500 text-white border-blue-700 mt-8 px-8 py-3 text-lg">Crear mi Perfil</a>
+            </div>
+
+            <div id="achievements-view" class="hidden">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 mb-8 flex flex-col sm:flex-row items-center gap-6">
+                    <img id="player-avatar" src="" alt="Avatar del jugador" class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-primary shadow-lg">
+                    <div class="text-center sm:text-left">
+                        <h1 id="player-name" class="text-3xl sm:text-4xl text-slate-800 dark:text-white"></h1>
+                        <p id="player-info" class="text-slate-500 dark:text-slate-400 text-lg"></p>
+                        <div class="mt-4 flex justify-center sm:justify-start items-center gap-6">
+                            <div class="font-bold text-xl bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-300 py-2 px-4 rounded-full flex items-center gap-2">🪙 <span id="player-coins">0</span></div>
+                            <div class="font-bold text-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300 py-2 px-4 rounded-full flex items-center gap-2">⭐ <span id="player-points">0</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-3xl text-center mb-6 text-white">Medallas de Municipios</h2>
+                    <div id="medals-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+                        <!-- Las medallas se generarán aquí -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="./js/logros-main.js" type="module"></script>
+     <script src="js/funciones.js"></script>
+</body>
+</html>

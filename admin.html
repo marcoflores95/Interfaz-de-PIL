@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herramientas de Administrador - GTO Kids</title>
+    <!--
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.puter.com/v2/"></script> -->
+
+    <script src="TailwindCSS/tailwind.js"></script>
+    <script src="TailwindCSS/puter.js"></script>
+   
+
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans">
+
+    <div class="container mx-auto p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-teal-500">Panel de Administración de Jugadores</h1>
+            <p class="text-slate-500 dark:text-slate-400 mt-2">Asigna monedas a los perfiles de usuario existentes.</p>
+            <a href="index.html" class="text-blue-500 hover:underline mt-4 inline-block">← Volver al inicio</a>
+        </header>
+
+        <div id="profiles-list" class="max-w-2xl mx-auto space-y-4">
+            <!-- La lista de perfiles se generará aquí -->
+        </div>
+    </div>
+
+    <script type="module">
+        import * as Player from './js/player-data.js';
+        import * as UI from './js/ui.js';
+
+        const profilesListContainer = document.getElementById('profiles-list');
+
+        function renderProfiles() {
+            profilesListContainer.innerHTML = ''; // Limpiar la lista
+            const allProfiles = Player.getAllProfiles();
+            const profileIds = Object.keys(allProfiles);
+
+            if (profileIds.length === 0) {
+                profilesListContainer.innerHTML = `<p class="text-center text-slate-500">No se encontraron perfiles.</p>`;
+                return;
+            }
+
+            profileIds.forEach(id => {
+                const profile = allProfiles[id];
+                const card = document.createElement('div');
+                card.className = 'bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md flex items-center justify-between gap-4';
+
+                card.innerHTML = `
+                    <div>
+                        <p class="font-bold text-lg text-primary dark:text-sky-400">${profile.username}</p>
+                        <p class="text-xs text-slate-400">ID: ${profile.id}</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-300">Monedas actuales: <span class="font-bold">${profile.coins}</span> 🪙</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="number" placeholder="Nuevas monedas" class="coin-input p-2 border rounded-md w-32 bg-slate-50 dark:bg-slate-700 dark:border-slate-600" data-profile-id="${id}">
+                        <button class="save-coins-btn p-2 bg-teal-500 text-white font-bold rounded-md hover:bg-teal-600" data-profile-id="${id}">Guardar</button>
+                    </div>
+                `;
+                profilesListContainer.appendChild(card);
+            });
+        }
+
+        profilesListContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('save-coins-btn')) {
+                const profileId = e.target.dataset.profileId;
+                const input = document.querySelector(`.coin-input[data-profile-id="${profileId}"]`);
+                const newAmount = parseInt(input.value, 10);
+
+                if (isNaN(newAmount) || newAmount < 0) {
+                    alert("Por favor, introduce un número válido y positivo.");
+                    return;
+                }
+
+                const success = Player.assignCoinsToProfile(profileId, newAmount);
+                if (success) {
+                    alert(`¡Monedas actualizadas para ${profileId}!`);
+                    renderProfiles(); // Re-renderizar para mostrar el cambio
+                } else {
+                    alert(`No se pudo encontrar el perfil con ID: ${profileId}`);
+                }
+            }
+        });
+
+        // Renderizar al cargar la página
+        document.addEventListener('DOMContentLoaded', renderProfiles);
+    </script>
+
+</body>
+</html>

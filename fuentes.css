@@ -1,0 +1,60 @@
+/* 01 latin */
+@font-face {
+  font-family: 'Fredoka One';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/Fredoka-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/Poppins-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url('fonts/Roboto-Bold.woff2') format('woff2');
+}
+
+@font-face{
+    font-family:'HelveticaNeueLTStd-Bd';
+    src: url('fonts/HelveticaNeueLTStd-Bd.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face{
+    font-family:'HelveticaNeueLTStd-Blk';
+    src: url('fonts/HelveticaNeueLTStd-Blk.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face{
+    font-family:'HelveticaNeueLTStd-Lt2';
+    src: url('fonts/HelveticaNeueLTStd-Lt2.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face{
+    font-family:'HelveticaNeueLTStd-Md';
+    src: url('fonts/HelveticaNeueLTStd-Md.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face{
+    font-family:'HelveticaNeueLTStd-Th2';
+    src: url('fonts/HelveticaNeueLTStd-Th2.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+}

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suite de Pruebas de Sistema - GTO Kids</title>
+    <!--
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.puter.com/v2/"></script> -->
+
+    <script src="TailwindCSS/tailwind.js"></script>
+    <script src="TailwindCSS/puter.js"></script>
+
+
+    <style>
+        .test-btn { transition: all 0.2s; }
+        .test-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .log-pass { color: #22c55e; }
+        .log-fail { color: #ef4444; }
+        .log-info { color: #3b82f6; }
+        .log-warn { color: #f59e0b; }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans">
+
+    <div class="container mx-auto p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-indigo-500">Suite de Pruebas de Sistema</h1>
+            <p class="text-slate-500 dark:text-slate-400 mt-2">Verifica la integridad completa del sistema con un solo clic.</p>
+        </header>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2 border-slate-700">Controles de Prueba</h2>
+                <div class="space-y-4">
+                    <button id="run-system-test-btn" class="w-full test-btn text-white font-bold py-3 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-lg">
+                        🚀 Ejecutar Prueba Completa del Sistema
+                    </button>
+                    <button id="clear-log-btn" class="w-full test-btn text-white font-bold py-2 px-4 rounded-lg bg-slate-500 hover:bg-slate-600">
+                        Limpiar Resultados
+                    </button>
+                     <button id="reset-profiles-btn" class="w-full test-btn text-white font-bold py-2 px-4 rounded-lg bg-red-600 hover:bg-red-700">
+                        ⚠️ Limpiar Todos los Perfiles
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2 border-slate-700">Resultados en Vivo</h2>
+                <pre id="log-output" class="bg-slate-900 text-white p-4 rounded-lg h-96 overflow-y-auto text-sm font-mono"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import * as Player from './js/player-data.js';
+        import { MUNICIPIOS, AVATARS } from './js/config.js';
+
+        const logOutput = document.getElementById('log-output');
+        const runSystemTestBtn = document.getElementById('run-system-test-btn');
+        const clearLogBtn = document.getElementById('clear-log-btn');
+        const resetProfilesBtn = document.getElementById('reset-profiles-btn');
+
+        const log = (message, type = 'info') => {
+            const el = document.createElement('div');
+            el.textContent = `[${type.toUpperCase()}] ${message}`;
+            el.className = `log-${type}`;
+            logOutput.appendChild(el);
+            logOutput.scrollTop = logOutput.scrollHeight;
+        };
+
+        const assert = (condition, passMessage, failMessage) => {
+            if (condition) {
+                log(`✅ PASSED: ${passMessage}`, 'pass');
+                return true;
+            }
+            log(`❌ FAILED: ${failMessage}`, 'fail');
+            return false;
+        };
+        
+        async function runFullSystemTest() {
+            log('===== INICIANDO PRUEBA COMPLETA DEL SISTEMA =====', 'warn');
+            runSystemTestBtn.disabled = true;
+            runSystemTestBtn.textContent = 'Ejecutando...';
+
+            // 1. Crear perfil de prueba
+            const testUsername = `TestRunner_${Date.now()}`;
+            let testPlayer = Player.createNewPlayer(testUsername, 'tester');
+            if (!assert(testPlayer, `Perfil de prueba '${testUsername}' creado.`, 'No se pudo crear el perfil de prueba.')) {
+                runSystemTestBtn.disabled = false;
+                runSystemTestBtn.textContent = '🚀 Ejecutar Prueba Completa del Sistema';
+                return;
+            }
+            const testPlayerId = testPlayer.id;
+
+            // 2. Asignar máximo de monedas
+            log('Asignando 999,999 monedas...', 'info');
+            Player.assignCoinsToProfile(testPlayerId, 999999);
+            testPlayer = Player.getAllProfiles()[testPlayerId];
+            assert(testPlayer.coins === 999999, 'Monedas asignadas correctamente.', `Fallo al asignar monedas. Valor: ${testPlayer.coins}`);
+
+            // 3. Comprar todos los avatares de la tienda
+            log('Comprando todos los avatares de la tienda...', 'info');
+            Player.unlockAllStoreAvatars(testPlayerId);
+            testPlayer = Player.getAllProfiles()[testPlayerId];
+            assert(testPlayer.unlockedAvatars.length === AVATARS.length, `Se desbloquearon ${testPlayer.unlockedAvatars.length} avatares.`, `Se esperaban ${AVATARS.length}.`);
+
+            // 4. Asignar logro de Diamante a todos los municipios
+            log('Asignando logro de Diamante a todos los municipios...', 'info');
+            MUNICIPIOS.forEach(municipio => {
+                Player.setMunicipioScore(testPlayerId, municipio.id, 10000);
+            });
+            testPlayer = Player.getAllProfiles()[testPlayerId];
+            const achievedCount = Object.keys(testPlayer.municipioProgress).length;
+            assert(achievedCount === MUNICIPIOS.length, `${achievedCount} logros de municipio asignados.`, `Se esperaban ${MUNICIPIOS.length}.`);
+
+            // 5. Generar y guardar un avatar de IA
+            log('Generando y guardando un avatar de IA...', 'info');
+            const dummyBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+            Player.addGeneratedAvatar(dummyBase64, 'Test IA Avatar');
+            testPlayer = Player.getPlayerData(); // Recargar datos del jugador activo
+            assert(testPlayer.generatedAvatars.length === 1, 'Avatar de IA guardado correctamente.', 'Fallo al guardar avatar de IA.');
+            assert(testPlayer.generatedAvatars[0].url === dummyBase64, 'La URL del avatar de IA es correcta.', 'URL de avatar de IA incorrecta.');
+
+            // 6. Limpieza
+            log('Limpiando datos de prueba...', 'info');
+            Player.deleteTestPlayerProfile(testPlayerId);
+            assert(!Player.getAllProfiles()[testPlayerId], 'Perfil de prueba eliminado exitosamente.', 'Fallo al eliminar el perfil de prueba.');
+            
+            log('===== PRUEBA DEL SISTEMA COMPLETADA =====', 'warn');
+            runSystemTestBtn.disabled = false;
+            runSystemTestBtn.textContent = '🚀 Ejecutar Prueba Completa del Sistema';
+        }
+
+        runSystemTestBtn.addEventListener('click', runFullSystemTest);
+        clearLogBtn.addEventListener('click', () => logOutput.innerHTML = '');
+        resetProfilesBtn.addEventListener('click', () => {
+            if (confirm('¿Estás seguro? Esta acción borrará TODOS los perfiles de manera permanente.')) {
+                localStorage.removeItem(PROFILES_KEY);
+                localStorage.removeItem(ACTIVE_PROFILE_KEY);
+                log('Todos los perfiles han sido eliminados.', 'warn');
+            }
+        });
+    </script>
+</body>
+</html>

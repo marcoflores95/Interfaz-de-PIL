@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> PIL </title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../GuanajuatoKids/fuentes.css">
+
+    <script src="TailwindCSS/tailwind.js"></script>
+    <script src="TailwindCSS/puter.js"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'title': ['Fredoka One', 'cursive'],
+                    },
+                    colors: {
+                        'primary': '#1e71ed',
+                        'title-mustard': '#f59e0b',
+                        'role-student': '#f97316', // Naranja
+                        'role-parent': '#facc15',  // Amarillo
+                        'role-teacher': '#22c55e', // Verde
+                        'role-visitor': '#6b7280', // Gris
+                    }
+                }
+            }
+        }
+    </script>
+
+</head>
+<body class="bg-slate-100 dark:bg-slate-900">
+
+    <div id="app-container" class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg shadow-md sticky top-0 z-40">
+            <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+
+                <!-- Logo SEG -->
+                 <div class="btn_logo">
+                    <img id="LogoAzul" src="img/Logos/LOGO_SEG Azul.png" alt="Logo Guanajuato Azul" class="" draggable="false">
+                    <img id="LogoBlanco" src="img/Logos/LOGO_SEG_Blanco.png" alt="Logo Guanajuato Blanco" class="" draggable="false">
+                 </div>
+
+                <div class="flex items-center gap-2 md:gap-4">
+
+                    <button id="theme-toggle-btn" class="rounded-full bg-slate-200 dark:bg-slate-700 text-amber-500 hover:scale-105 transition-transform">
+                        <img src="img/Botones/sol-E.png" id="theme-icon-sun" class="btn_tema" draggable="false">
+                        <img src="img/Botones/luna-E.png" id="theme-icon-moon" class="btn_tema" draggable="false">
+                    </button>
+
+                    <!-- Menú de Perfil del Jugador -->
+                    <div id="profile-menu-container" class="hidden relative">
+                        <button id="profile-menu-button" class="flex items-center gap-3 p-2 rounded-full bg-slate-200 dark:bg-slate-600 transition-transform hover:scale-105">
+                            <span id="profile-menu-name" class="font-bold text-black dark:text-white hidden sm:block"></span>
+                            <img id="profile-menu-avatar" src="" alt="" class="w-10 h-10 rounded-full border-2 border-primary"> 
+                        </button>
+                        <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 py-1 z-50">
+                            <a href="#" id="modify-profile-btn" class="block px-4 py-2 text-sm text-black dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700">Modificar Perfil</a>
+                            <a href="#" id="delete-profile-btn" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">Borrar Perfil</a>
+                        </div>
+                    </div>
+                </div>
+
+            </nav>
+        </header>
+
+        <main class="flex-grow container mx-auto p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+            
+            <section id="role-selection" class="hidden w-full max-w-4xl mx-auto bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-2xl">
+                <h2 class="text-4xl md:text-5xl text-center mb-8 color_bienvenida">¡Bienvenido!</h2>
+                <div class="grid grid-cols-2 md:grid-cols-12 gap-6">
+
+                    <!-- Code: Marco Flores-->
+                    <button id="role-student" class="col-span-1 md:col-span-6">
+                        <img src="img/Botones/menu-E.png" class="hover:scale-105 transition-transform" draggable="false">
+                    </button>
+
+                    <!-- Code: Marco Flores-->
+                    <button data-role="Padres" class="col-span-12 md:col-span-6">
+                        <img src="img/Botones/Menu-T.png" class="hover:scale-105 transition-transform" draggable="false">
+                    </button>
+
+                    <!-- Code: Marco Flores-->
+                    <button data-role="Docente" class="col-span-1 md:col-span-6">
+                         <img src="img/Botones/menu-D.png" class="hover:scale-105 transition-transform" draggable="false">
+                    </button>
+
+                    <!-- Code: Marco Flores-->
+                    <button data-role="Visitante" class="col-span-1 md:col-span-6">
+                        <img src="img/Botones/menu-V.png" class="hover:scale-105 transition-transform" draggable="false">
+                    </button>
+    
+                </div> 
+            </section>
+
+            <section id="player-dashboard" class="hidden text-center">
+                 <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-2xl">
+
+                    <div class="flex flex-col items-center gap-4 mb-6">
+                        <img id="player-avatar" src="" alt="" class="w-32 h-32 rounded-full border-4 border-white shadow-lg">
+                        <h2 id="player-greeting" class="color_bienvenida text-4xl md:text-5xl"></h2>
+                        <p class=" dark:text-white text-lg color_descripcion">¿Listo para una nueva aventura?</p>
+                    </div> 
+
+                    <div class="w-full max-w-md mx-auto flex flex-col items-center justify-center gap-6">
+
+                        <div class="centrar_comenzar hover:scale-105 transition-transform">
+                            <img src="img/Botones/comenzar-E.png" class="btn_comenzar" onclick="btn_comenzar()">
+                        </div>
+
+                        <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Contenedor de Modales -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden items-center justify-center p-4">
+        
+        <div id="modal-registro-estudiante" class="modal hidden bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col modal-animate">
+            <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                <h3 class="text-2xl color_bienvenida">¡Crea tu Perfil!</h3>
+                <button class="close-modal-btn text-3xl text-slate-400 hover:text-red-500 transition-colors">&times;</button>
+            </div>
+            <form id="student-registration-form" class="relative flex-grow overflow-y-auto p-6 sm:p-8 space-y-6">
+                <div>
+                    <label for="username" class="block font-bold text-black dark:text-white mb-1">Nombre de Usuario: </label>
+                    <input type="text" id="username" name="username" placeholder="Ej. SuperExplorador25" class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white" required>
+                </div>
+                <div>
+                    <span class="block font-bold text-black dark:text-white mb-2">Género: </span>
+                    <div class="flex gap-4">
+
+                        <label class="flex-1 flex justify-center border-2 border-slate-200 dark:border-slate-700 rounded-lg has-[:checked]:bg-blue-50 dark:has-[:checked]:bg-blue-900/20 has-[:checked]:border-blue-500">                      
+                            <div class="img_ninos">
+                                    <img class="" src="img/Botones/nino.png" alt="Niño">
+                                    <div class="seleccionar_genero gap-2 ">
+                                        <input type="radio" name="gender" value="boy" class="accent-blue-500" checked>
+                                        <span class="font-bold text-black dark:text-white">Niño</span>
+                                    </div>    
+                            </div>        
+                        </label>
+                           
+                        <label class="flex-1 flex justify-center border-2 border-slate-200 dark:border-slate-700 text-white rounded-lg has-[:checked]:bg-pink-50 dark:has-[:checked]:bg-pink-900/20 has-[:checked]:border-pink-500">
+                            <div class="img_ninos">
+                                <img src="img/Botones/nina.png" alt="Niña">
+                                <div class="seleccionar_genero">
+                                    <input type="radio" name="gender" value="girl" class="accent-pink-500">
+                                    <span class="font-bold text-black dark:text-white mb-2">Niña</span>
+                                </div> 
+                            </div>
+ 
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold text-black dark:text-white mb-2">Edad: <span id="age-display" class="text-blue-600 font-black text-lg">8</span> años</label>
+                    <input type="range" id="age" name="age" min="4" max="15" value="8" class="w-full h-2 bg-slate-200 rounded-lg appearance-none">
+                </div>
+                <div>
+           
+                    <!-- Code: Marco -->
+                    <label for="municipality" class="block text-black font-bold dark:text-white mb-1">Municipio: </label>
+                    <div class="mb-8 max-w-2xl mx-auto">
+              
+                    <select id="municipality" name="municipality" class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white" required>
+                        <option value="">Selecciona uno...</option>
+                    </select>
+                    </div>
+
+                </div>
+    
+                 <div class="flex gap-4 justify-center">
+                    <button type="submit" class="btn_guardar_estructura hover:scale-105 transition-transform">Guardar</button>
+                </div>
+
+                <div id="registration-loader" class="absolute inset-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hidden items-center justify-center flex-col gap-4 rounded-b-2xl">
+                    <svg class="animate-spin h-10 w-10 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <p class="text-lg font-bold text-slate-700 dark:text-slate-200">Registrando tu perfil...</p>
+                </div>
+            </form>
+
+        </div>
+
+        <div id="modal-modificar-perfil" class="modal hidden bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md flex flex-col modal-animate">
+      
+            <div class="p-5 border-b text-white dark:border-slate-700 flex justify-between items-center">
+                <h3 class="text-2xl color_bienvenida">Modificar Perfil</h3>
+                <button class="close-modal-btn text-3xl text-slate-400 hover:text-red-500 transition-colors">&times;</button>
+            </div>
+            <form id="modify-profile-form" class="p-6 space-y-4">
+                <div>
+                    <label for="modify-username" class="block text-sm font-bold text-black dark:text-white mb-1">Nuevo Nombre de Usuario</label>
+                    <input type="text" id="modify-username" name="username" class="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 rounded-lg focus:ring-2 focus:ring-blue-500 dark:text-white" required> 
+                </div>
+
+                <div class="flex gap-4 justify-center">
+                    <button type="submit" class="btn_guardar_estructura hover:scale-105 transition-transform">Guardar</button>
+                </div>
+
+            </form>
+        </div>
+
+        <div id="modal-confirmar-borrado" class="modal hidden bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md flex flex-col modal-animate">
+            <div class="p-5 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-2xl text-red-500 text-center">¿Estás seguro?</h3>
+            </div>
+            <div class="p-6 text-center space-y-4">
+                <p class="text-black dark:text-white">Esta acción es permanente y no se puede deshacer. Perderás todo tu progreso, monedas y avatares.</p>
+                <div class="flex gap-4 justify-center">
+                    <button id="confirm-delete-btn" class="btn-3d bg-red-600 text-white border-red-800 px-6 py-2">Sí, Borrar</button>
+                    <button class="close-modal-btn btn-3d bg-slate-400 text-black border-slate-600 px-6 py-2">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="iframe-modal" class="modal hidden bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl h-[90vh] flex flex-col modal-animate">
+            <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                <h3 id="iframe-modal-title" class="text-xl text-title-mustard">Formulario</h3>
+                <button class="close-modal-btn text-3xl text-slate-400 hover:text-red-500 transition-colors">&times;</button>
+            </div>
+            <div class="flex-grow p-1">
+                <iframe id="iframe-modal-content" src="" class="w-full h-full border-0" allowfullscreen>Cargando…</iframe>
+            </div>
+
+             <div class="flex gap-4 justify-center"> 
+                    <img src="img/Botones/comenzar-E.png" class="btn_comenzar_formularios espacio hover:scale-105 transition-transform " onclick="btn_comenzar()">
+                </div>
+        </div>
+
+        <div id="privacy-modal" class="modal hidden bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col modal-animate">
+            <div class="p-5 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-2xl text-title-mustard text-center">¡Cuidamos tu Información!</h3>
+            </div>
+            <div class="flex-grow overflow-y-auto p-6 sm:p-8 space-y-4 text-slate-600 dark:text-slate-300 text-center">
+                <p>¡Hola, explorador! Antes de empezar la aventura, es importante que sepas que cuidamos tus datos.</p>
+                <p>No te preocupes, solo guardamos tu nombre de usuario y progreso del juego para que tu experiencia sea la mejor. ¡No compartimos tu información con nadie más!</p>
+                <p>Pide a tus papás o a tu maestro que lean el aviso de privacidad completo si tienes dudas.</p>
+                <a href="https://www.seg.guanajuato.gob.mx/SitePages/Aviso_privacidad.aspx" target="_blank" class="text-blue-500 hover:underline">Ver Aviso de Privacidad Oficial</a>
+            </div>
+            <div class="p-4 bg-slate-50 dark:bg-slate-900/50 flex justify-center">
+                <button id="accept-privacy-btn" class="w-full max-w-xs btn-3d bg-green-500 text-white border-green-700 py-3 text-lg">¡Entendido, a jugar!</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="effects-container"></div>
+    <script src="js/config.js" type="module"></script>
+    <script src="js/ui.js" type="module"></script>
+    <script src="js/player-data.js" type="module"></script>
+    <script src="js/registro.js" type="module"></script>
+    <script src="js/app.js" type="module"></script>
+    <script src="js/main.js" type="module"></script>
+    <script src="js/funciones.js"></script>
+
+</body>
+</html>
